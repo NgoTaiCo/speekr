@@ -1,7 +1,11 @@
 [package]
 name = "speekr"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+description = "Neural text-to-speech and translation from your system tray"
+homepage = "https://github.com/NgoTaiCo/speekr"
+repository = "https://github.com/NgoTaiCo/speekr"
+license = "Apache-2.0"
 
 [dependencies]
 arboard = "3"
