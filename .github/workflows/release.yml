@@ -98,6 +98,7 @@ jobs:
             libxcb-xfixes0-dev \
             libxkbcommon-dev \
             libasound2-dev \
+            libxdo-dev \
             pkg-config
 
       - name: Install Rust (stable)
