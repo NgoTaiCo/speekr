@@ -1,0 +1,17 @@
+[package]
+name = "speekr"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+arboard = "3"
+global-hotkey = "0.7"
+rodio = "0.21"
+tao = "0.34"
+thiserror = "2"
+tray-icon = "0.21"
+wry = "0.55"
+
+[features]
+default = []
+edge-audio = []
