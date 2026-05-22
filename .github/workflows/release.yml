@@ -127,12 +127,15 @@ jobs:
   release:
     name: Publish Release
     needs: [build-windows, build-macos, build-linux]
+    # Run even if some build jobs failed — we still want to publish whatever was built
+    if: always() && contains(needs.*.result, 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
 
       - name: List artifacts
         run: find artifacts -type f
@@ -143,8 +146,9 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          fail_on_unmatched_files: false
           files: |
-            artifacts/speekr-windows-exe/speekr.exe
-            artifacts/speekr-windows-installer/speekr-setup-*.exe
-            artifacts/speekr-macos/speekr-macos.tar.gz
-            artifacts/speekr-linux/speekr-linux.tar.gz
+            artifacts/speekr.exe
+            artifacts/speekr-setup-*.exe
+            artifacts/speekr-macos.tar.gz
+            artifacts/speekr-linux.tar.gz

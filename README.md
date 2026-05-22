@@ -1,8 +1,9 @@
 <div align="center">
 
-# 🔊 speekr
+# speekr 😄
 
-**Neural text-to-speech and instant translation — right from your system tray.**
+**Too lazy to read? Or just want a blazing-fast audiobook experience?**<br>
+**Download. Install. Highlight text. Press a key. Done. It's free. You're welcome. 😎**
 
 [![Release](https://github.com/NgoTaiCo/speekr/actions/workflows/release.yml/badge.svg)](https://github.com/NgoTaiCo/speekr/actions/workflows/release.yml)
 [![GitHub release](https://img.shields.io/github/v/release/NgoTaiCo/speekr?style=flat-square&color=blue)](https://github.com/NgoTaiCo/speekr/releases)
@@ -10,30 +11,38 @@
 ![Built with Rust](https://img.shields.io/badge/built%20with-Rust-orange?style=flat-square&logo=rust)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square)](LICENSE)
 
-Select any text anywhere → press a hotkey → hear it spoken in a neural voice, or see it translated in a popup.
-
 </div>
 
 ---
 
-## ✨ Features
+## What does it do? 🤔
 
-- 🎙️ **Neural TTS** — Microsoft Neural voices via `edge-tts` (Jenny, Guy, HoaiMy, NamMinh)
-- 🌐 **Google Translate popup** — instant translation with a floating overlay
-- 🚺🚹 **Voice gender** — switch Male / Female from the tray menu
-- 🔤 **Language selection** — English / Vietnamese with auto-detect
-- ⚡ **Zero UI** — lives entirely in your system tray, no windows
-- ❌ **Cancellable** — re-press the hotkey or click *Cancel* in the tray to stop mid-speech
+Highlight any text on your screen, hit a hotkey, and a neural voice reads it out loud. That's it. No app to open, no window to deal with — it just hides in your system tray and minds its own business. Oh, and it can translate stuff too. Because why not.
 
 ---
 
-## 📋 Requirements
+## Features 😏
 
-| Requirement | Purpose |
-|-------------|---------|
-| **Python 3** | Runs the `edge-tts` synthesis engine |
-| **edge-tts** (`pip install edge-tts`) | Neural voice quality — falls back to OS TTS if missing |
-| **Windows 10/11** *(WebView2)* | Pre-installed on Win10/11; required for the translate popup |
+| Feature | What's the deal |
+|---------|-----------------|
+| **Neural TTS** | Microsoft Neural voices via `edge-tts` — sounds way better than your OS robot voice |
+| **Google Translate popup** | Floating translation overlay. Highlight → hotkey → boom, translated |
+| **Male / Female voice** | Pick your narrator, no judgment |
+| **English / Vietnamese** | Full neural voice support for both, with auto-detect so you don't have to think |
+| **Zero UI** | Lives in the system tray. No windows, no distractions, no bloat |
+| **Cancel anytime** | Made a mistake? Press the hotkey again or hit *Cancel* in the tray 😅 |
+
+---
+
+## Requirements 😬
+
+You need Python + one pip package. That's it. Seriously.
+
+| Thing you need | Why |
+|----------------|-----|
+| **Python 3** | Runs the neural voice engine under the hood |
+| **edge-tts** | The actual magic. Falls back to your OS voice if it's missing (sounds worse, fair warning) |
+| **Windows 10/11** | WebView2 comes pre-installed — needed only for the translate popup |
 
 ```sh
 pip install edge-tts
@@ -41,15 +50,15 @@ pip install edge-tts
 
 ---
 
-## 📦 Installation
+## Installation 🙃
 
 ### Windows
-Download **`speekr-setup-1.0.0.exe`** from [Releases](https://github.com/NgoTaiCo/speekr/releases) and run the installer.
+Grab **`speekr-setup-1.0.0.exe`** from [Releases](https://github.com/NgoTaiCo/speekr/releases) and run it.
 
-> The installer offers optional **Desktop shortcut** and **Run on startup** options.
+The installer lets you optionally add a **Desktop shortcut** and **Run on startup** — both off by default, because we respect your desktop real estate.
 
 ### macOS / Linux
-Download the binary from [Releases](https://github.com/NgoTaiCo/speekr/releases):
+Grab the binary from [Releases](https://github.com/NgoTaiCo/speekr/releases):
 
 ```sh
 # macOS
@@ -63,20 +72,22 @@ tar -xzf speekr-linux.tar.gz
 
 ---
 
-## ⌨️ Usage
+## How to use it 😇
 
-| Hotkey | Action |
-|--------|--------|
-| `Ctrl + Alt + T` | Read selected text aloud |
-| `Ctrl + Alt + G` | Translate selected text (popup) |
+Highlight text anywhere → press the hotkey → profit.
 
-**Tray menu** (right-click the 🔊 icon in the system tray):
+| Hotkey | What happens |
+|--------|-------------|
+| `Ctrl + Alt + T` | Reads your highlighted text out loud |
+| `Ctrl + Alt + G` | Translates your highlighted text in a popup |
+
+**Tray menu** — right-click the tray icon if you want to change stuff:
 
 ```
-✓ Voice: Female       ← toggle Male / Female
+✓ Voice: Female       ← your narrator gender preference
   Voice: Male
 ─────────────────────
-✓ Lang: Auto-detect   ← toggle language mode
+✓ Lang: Auto-detect   ← let the app figure it out
   Lang: English
   Lang: Vietnamese
 ─────────────────────
@@ -87,39 +98,39 @@ tar -xzf speekr-linux.tar.gz
 
 ---
 
-## 🌍 Language Support
+## Language Support 😤
 
 ### Text-to-Speech
 
 | Language | Female voice | Male voice |
 |----------|-------------|------------|
-| 🇺🇸 English | `en-US-JennyNeural` | `en-US-GuyNeural` |
-| 🇻🇳 Vietnamese | `vi-VN-HoaiMyNeural` | `vi-VN-NamMinhNeural` |
+| English | `en-US-JennyNeural` | `en-US-GuyNeural` |
+| Vietnamese | `vi-VN-HoaiMyNeural` | `vi-VN-NamMinhNeural` |
 
-> **Roadmap** — `edge-tts` supports ~80 languages (French, Japanese, Korean, Chinese, Spanish…). Additional languages will be added in future releases.
+> **Roadmap** — `edge-tts` supports ~80 languages. French, Japanese, Korean, Chinese, Spanish and more are coming. Eventually. 😂
 
 ### Translation
 
 Currently translates **to Vietnamese only**.
 
-> **Roadmap** — Google Translate supports 130+ target languages. Selectable target language is planned.
+> **Roadmap** — Selectable target language is planned. For now, Vietnamese it is.
 
 ### Auto-detect
 
-> ⚠️ **Limitation** — Auto-detect currently distinguishes **English vs Vietnamese only** (based on Vietnamese-specific diacritics). Other languages will default to English voice. Proper multi-language detection is planned.
+> **Heads up** — Auto-detect only knows English vs Vietnamese right now (it checks for Vietnamese-specific diacritics). If you highlight French or Italian, it'll read it with an English accent and feel zero shame about it. Proper multi-language detection is on the roadmap. 🥲
 
 ---
 
-## 🏗️ Building from Source
+## Build from Source 🤓
 
 ```sh
 git clone https://github.com/NgoTaiCo/speekr.git
 cd speekr
 cargo build --release
-# binary at: target/release/speekr(.exe)
+# output: target/release/speekr(.exe)
 ```
 
-**Linux** — install system dependencies first:
+**Linux** — grab these system deps first:
 
 ```sh
 sudo apt-get install -y \
@@ -131,88 +142,6 @@ sudo apt-get install -y \
 
 ---
 
-## 📄 License
+## License
 
-[Apache License 2.0](LICENSE)
-
-
-- `Ctrl+Shift+T`: doc text da boi den bang TTS (chi English).
-- `Ctrl+Shift+G`: dich doan van da boi den bang Google Translate va hien popup (khong phat audio).
-
-## Scope hien tai
-
-- TTS: chi ho tro English.
-- Translation: flow rieng, khong di chung voi TTS.
-- Cancel: bam lai `Ctrl+Shift+T` hoac chon menu `Cancel current speech` de dung doc ngay.
-
-## TTS backend
-
-speekr thu backend theo thu tu:
-
-1. KittenTTS command (thu nghiem)
-2. Fallback sang TTS he dieu hanh
-
-### Bien moi truong TTS
-
-| Bien moi truong | Mo ta |
-| --- | --- |
-| `SPEEKR_KITTEN_BIN` | Duong dan command KittenTTS (mac dinh: `kittentts`) |
-| `SPEEKR_VOICE` | Override voice cho Linux `espeak-ng` va voice hint tren Windows |
-| `SPEEKR_CULTURE` | Culture voice tren Windows (mac dinh app set `en-US`) |
-
-## Translation (Google-like)
-
-- Hotkey: `Ctrl+Shift+G`
-- Co che: goi endpoint Google Translate de dich doan van.
-- Translation chi hien popup, khong truyen qua TTS.
-
-## Cai dat nhanh
-
-```sh
-git clone https://github.com/NgoTaiCo/speekr.git
-cd speekr
-cargo build --release
-```
-
-Run:
-
-- Windows: `./target/release/speekr.exe`
-- macOS/Linux: `./target/release/speekr`
-
-## Build scripts
-
-- `scripts/build-windows.ps1`
-- `scripts/build-macos.sh`
-- `scripts/build-linux.sh`
-
-Tat ca script deu build release:
-
-```sh
-cargo build --release
-```
-
-## Cau truc du an
-
-```text
-speekr/
-├── Cargo.toml
-├── README.md
-├── scripts/
-│   ├── build-linux.sh
-│   ├── build-macos.sh
-│   └── build-windows.ps1
-└── src/
-    ├── main.rs
-    ├── hotkey.rs
-    ├── clipboard.rs
-    ├── tray.rs
-    ├── popup.rs
-    ├── translate.rs
-    ├── language.rs
-    └── tts/
-        ├── mod.rs
-        ├── kitten.rs
-        ├── windows.rs
-        ├── macos.rs
-        └── linux.rs
-```
+[Apache License 2.0](LICENSE) — free as in free beer. 😄
