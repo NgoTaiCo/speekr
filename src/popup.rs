@@ -46,7 +46,7 @@ impl TranslationPopup {
 
         let (x, y) = content.cursor_position.unwrap_or((80.0, 80.0));
         let window = WindowBuilder::new()
-            .with_title("TTS Translate")
+          .with_title("speekr Translate")
             .with_inner_size(LogicalSize::new(420.0, 280.0))
             .with_position(LogicalPosition::new(x + 14.0, y + 18.0))
             .with_decorations(false)

@@ -6,12 +6,17 @@ use thiserror::Error;
 
 pub struct HotkeyRegistration {
     _manager: GlobalHotKeyManager,
-    hotkey: HotKey,
+    speak_hotkey: HotKey,
+    translate_hotkey: HotKey,
 }
 
 impl HotkeyRegistration {
-    pub fn id(&self) -> u32 {
-        self.hotkey.id()
+    pub fn speak_id(&self) -> u32 {
+        self.speak_hotkey.id()
+    }
+
+    pub fn translate_id(&self) -> u32 {
+        self.translate_hotkey.id()
     }
 }
 
@@ -23,11 +28,14 @@ pub enum HotkeyError {
 
 pub fn register_default() -> Result<HotkeyRegistration, HotkeyError> {
     let manager = GlobalHotKeyManager::new()?;
-    let hotkey = HotKey::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyT);
-    manager.register(hotkey)?;
+    let speak_hotkey = HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT);
+    let translate_hotkey = HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyG);
+    manager.register(speak_hotkey)?;
+    manager.register(translate_hotkey)?;
 
     Ok(HotkeyRegistration {
         _manager: manager,
-        hotkey,
+        speak_hotkey,
+        translate_hotkey,
     })
 }

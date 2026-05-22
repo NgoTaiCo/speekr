@@ -1,18 +1,16 @@
 use thiserror::Error;
 use tray_icon::{
     Icon, TrayIcon, TrayIconBuilder,
-    menu::{CheckMenuItem, Menu, MenuId, MenuItem, PredefinedMenuItem, Submenu},
+    menu::{Menu, MenuId, MenuItem, PredefinedMenuItem},
 };
-
-use crate::language::Language;
 
 pub struct AppTray {
     _tray_icon: TrayIcon,
     quit_id: MenuId,
-    language_items: Vec<(Language, CheckMenuItem)>,
+    cancel_id: MenuId,
     _settings_item: MenuItem,
+    cancel_item: MenuItem,
     _quit_item: MenuItem,
-    _language_menu: Submenu,
 }
 
 #[derive(Debug, Error)]
@@ -28,38 +26,21 @@ pub enum TrayError {
 pub fn create() -> Result<AppTray, TrayError> {
     let menu = Menu::new();
     let settings_item = MenuItem::new("Settings (coming soon)", false, None);
+    let cancel_item = MenuItem::new("Cancel current speech", false, None);
     let quit_item = MenuItem::new("Quit", true, None);
     let separator = PredefinedMenuItem::separator();
     let separator2 = PredefinedMenuItem::separator();
-    let language_menu = Submenu::new("Speaker output", true);
-    let language_items = Language::ALL
-        .iter()
-        .copied()
-        .map(|language| {
-            let item = CheckMenuItem::new(
-                format!("Read {}", language.label()),
-                true,
-                language == Language::Vietnamese,
-                None,
-            );
-            (language, item)
-        })
-        .collect::<Vec<_>>();
-
-    for (_, item) in &language_items {
-        language_menu.append(item)?;
-    }
 
     menu.append(&settings_item)?;
     menu.append(&separator)?;
-    menu.append(&language_menu)?;
+    menu.append(&cancel_item)?;
     menu.append(&separator2)?;
     menu.append(&quit_item)?;
 
     let tray_icon = TrayIconBuilder::new()
         .with_menu(Box::new(menu))
         .with_menu_on_left_click(true)
-        .with_tooltip("speekr - Ctrl+Shift+T")
+        .with_tooltip("speekr - Speak: Ctrl+Alt+T, Translate: Ctrl+Alt+G")
         .with_title("speekr")
         .with_icon(build_icon()?)
         .build()?;
@@ -67,10 +48,10 @@ pub fn create() -> Result<AppTray, TrayError> {
     Ok(AppTray {
         _tray_icon: tray_icon,
         quit_id: quit_item.id().clone(),
-        language_items,
+        cancel_id: cancel_item.id().clone(),
         _settings_item: settings_item,
+        cancel_item,
         _quit_item: quit_item,
-        _language_menu: language_menu,
     })
 }
 
@@ -79,17 +60,12 @@ impl AppTray {
         id == &self.quit_id
     }
 
-    pub fn select_language(&self, id: &MenuId) -> Option<Language> {
-        self.language_items
-            .iter()
-            .find(|(_, item)| item.id() == id)
-            .map(|(language, _)| *language)
+    pub fn is_cancel_event(&self, id: &MenuId) -> bool {
+        id == &self.cancel_id
     }
 
-    pub fn set_selected_language(&self, selected: Language) {
-        for (language, item) in &self.language_items {
-            item.set_checked(*language == selected);
-        }
+    pub fn set_cancel_enabled(&self, enabled: bool) {
+        self.cancel_item.set_enabled(enabled);
     }
 }
 
