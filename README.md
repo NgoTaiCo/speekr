@@ -78,10 +78,11 @@ tar -xzf speekr-linux.tar.gz
 
 Highlight text anywhere → press the hotkey → profit.
 
-| Hotkey | What happens |
-|--------|-------------|
-| `Ctrl + Alt + T` | Reads your highlighted text out loud |
-| `Ctrl + Alt + G` | Translates your highlighted text in a popup |
+| Platform | Speak | Translate |
+|----------|-------|-----------|
+| Windows | `Ctrl + Alt + T` | `Ctrl + Alt + G` |
+| macOS | `Cmd + Shift + T` | `Cmd + Shift + G` |
+| Linux | `Ctrl + Alt + S` | `Ctrl + Alt + G` |
 
 **Tray menu** — right-click the tray icon if you want to change stuff:
 

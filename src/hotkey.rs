@@ -28,8 +28,28 @@ pub enum HotkeyError {
 
 pub fn register_default() -> Result<HotkeyRegistration, HotkeyError> {
     let manager = GlobalHotKeyManager::new()?;
-    let speak_hotkey = HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT);
-    let translate_hotkey = HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyG);
+
+    // Windows: Ctrl+Alt+T / Ctrl+Alt+G
+    // macOS:   Cmd+Shift+T / Cmd+Shift+G  (Ctrl+Alt conflicts with Option combos)
+    // Linux:   Ctrl+Alt+S / Ctrl+Alt+G    (Ctrl+Alt+T is reserved for opening a terminal)
+    #[cfg(target_os = "windows")]
+    let (speak_hotkey, translate_hotkey) = (
+        HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyT),
+        HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyG),
+    );
+
+    #[cfg(target_os = "macos")]
+    let (speak_hotkey, translate_hotkey) = (
+        HotKey::new(Some(Modifiers::META | Modifiers::SHIFT), Code::KeyT),
+        HotKey::new(Some(Modifiers::META | Modifiers::SHIFT), Code::KeyG),
+    );
+
+    #[cfg(target_os = "linux")]
+    let (speak_hotkey, translate_hotkey) = (
+        HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyS),
+        HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyG),
+    );
+
     manager.register(speak_hotkey)?;
     manager.register(translate_hotkey)?;
 
