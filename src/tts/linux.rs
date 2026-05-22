@@ -8,7 +8,7 @@ use std::{
 };
 
 use super::{TtsEngine, TtsError};
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub struct LinuxTts;
 
@@ -17,6 +17,7 @@ impl TtsEngine for LinuxTts {
         &self,
         text: &str,
         language: Language,
+        _gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError> {
         if command_exists("espeak-ng") {

@@ -1,16 +1,29 @@
 use thiserror::Error;
 use tray_icon::{
     Icon, TrayIcon, TrayIconBuilder,
-    menu::{Menu, MenuId, MenuItem, PredefinedMenuItem},
+    menu::{CheckMenuItem, Menu, MenuId, MenuItem, PredefinedMenuItem},
 };
+
+use crate::language::{Gender, LanguageMode};
 
 pub struct AppTray {
     _tray_icon: TrayIcon,
     quit_id: MenuId,
     cancel_id: MenuId,
-    _settings_item: MenuItem,
     cancel_item: MenuItem,
     _quit_item: MenuItem,
+    // voice gender
+    voice_female_id: MenuId,
+    voice_male_id: MenuId,
+    voice_female_item: CheckMenuItem,
+    voice_male_item: CheckMenuItem,
+    // language mode
+    lang_auto_id: MenuId,
+    lang_english_id: MenuId,
+    lang_vietnamese_id: MenuId,
+    lang_auto_item: CheckMenuItem,
+    lang_english_item: CheckMenuItem,
+    lang_vietnamese_item: CheckMenuItem,
 }
 
 #[derive(Debug, Error)]
@@ -25,16 +38,30 @@ pub enum TrayError {
 
 pub fn create() -> Result<AppTray, TrayError> {
     let menu = Menu::new();
-    let settings_item = MenuItem::new("Settings (coming soon)", false, None);
-    let cancel_item = MenuItem::new("Cancel current speech", false, None);
-    let quit_item = MenuItem::new("Quit", true, None);
-    let separator = PredefinedMenuItem::separator();
-    let separator2 = PredefinedMenuItem::separator();
 
-    menu.append(&settings_item)?;
-    menu.append(&separator)?;
+    let voice_female_item = CheckMenuItem::new("Voice: Female", true, true, None);
+    let voice_male_item = CheckMenuItem::new("Voice: Male", true, false, None);
+    let sep1 = PredefinedMenuItem::separator();
+
+    let lang_auto_item = CheckMenuItem::new("Lang: Auto-detect", true, true, None);
+    let lang_english_item = CheckMenuItem::new("Lang: English", true, false, None);
+    let lang_vietnamese_item = CheckMenuItem::new("Lang: Vietnamese", true, false, None);
+    let sep2 = PredefinedMenuItem::separator();
+
+    let cancel_item = MenuItem::new("Cancel current speech", false, None);
+    let sep3 = PredefinedMenuItem::separator();
+
+    let quit_item = MenuItem::new("Quit", true, None);
+
+    menu.append(&voice_female_item)?;
+    menu.append(&voice_male_item)?;
+    menu.append(&sep1)?;
+    menu.append(&lang_auto_item)?;
+    menu.append(&lang_english_item)?;
+    menu.append(&lang_vietnamese_item)?;
+    menu.append(&sep2)?;
     menu.append(&cancel_item)?;
-    menu.append(&separator2)?;
+    menu.append(&sep3)?;
     menu.append(&quit_item)?;
 
     let tray_icon = TrayIconBuilder::new()
@@ -49,9 +76,18 @@ pub fn create() -> Result<AppTray, TrayError> {
         _tray_icon: tray_icon,
         quit_id: quit_item.id().clone(),
         cancel_id: cancel_item.id().clone(),
-        _settings_item: settings_item,
         cancel_item,
         _quit_item: quit_item,
+        voice_female_id: voice_female_item.id().clone(),
+        voice_male_id: voice_male_item.id().clone(),
+        voice_female_item,
+        voice_male_item,
+        lang_auto_id: lang_auto_item.id().clone(),
+        lang_english_id: lang_english_item.id().clone(),
+        lang_vietnamese_id: lang_vietnamese_item.id().clone(),
+        lang_auto_item,
+        lang_english_item,
+        lang_vietnamese_item,
     })
 }
 
@@ -64,8 +100,39 @@ impl AppTray {
         id == &self.cancel_id
     }
 
+    pub fn is_voice_female_event(&self, id: &MenuId) -> bool {
+        id == &self.voice_female_id
+    }
+
+    pub fn is_voice_male_event(&self, id: &MenuId) -> bool {
+        id == &self.voice_male_id
+    }
+
+    pub fn is_lang_auto_event(&self, id: &MenuId) -> bool {
+        id == &self.lang_auto_id
+    }
+
+    pub fn is_lang_english_event(&self, id: &MenuId) -> bool {
+        id == &self.lang_english_id
+    }
+
+    pub fn is_lang_vietnamese_event(&self, id: &MenuId) -> bool {
+        id == &self.lang_vietnamese_id
+    }
+
     pub fn set_cancel_enabled(&self, enabled: bool) {
         self.cancel_item.set_enabled(enabled);
+    }
+
+    pub fn set_voice(&self, gender: Gender) {
+        self.voice_female_item.set_checked(gender == Gender::Female);
+        self.voice_male_item.set_checked(gender == Gender::Male);
+    }
+
+    pub fn set_language_mode(&self, mode: LanguageMode) {
+        self.lang_auto_item.set_checked(mode == LanguageMode::Auto);
+        self.lang_english_item.set_checked(mode == LanguageMode::English);
+        self.lang_vietnamese_item.set_checked(mode == LanguageMode::Vietnamese);
     }
 }
 

@@ -35,6 +35,11 @@ enum AppEvent {
     SpeechFinished,
 }
 
+struct AppSettings {
+    language_mode: language::LanguageMode,
+    gender: language::Gender,
+}
+
 fn main() {
     let mut event_loop_builder = EventLoopBuilder::<AppEvent>::with_user_event();
     let event_loop = event_loop_builder.build();
@@ -52,7 +57,10 @@ fn main() {
     let hotkey = hotkey::register_default().expect("failed to register global hotkeys");
     let tray = tray::create().expect("failed to create system tray icon");
     tray.set_cancel_enabled(false);
-    let selected_language = language::Language::English;
+    let settings = Arc::new(Mutex::new(AppSettings {
+        language_mode: language::LanguageMode::Auto,
+        gender: language::Gender::Female,
+    }));
     let mut popup = popup::TranslationPopup::default();
     let current_job = Arc::new(Mutex::new(None::<Arc<AtomicBool>>));
     let proxy = event_loop.create_proxy();
@@ -72,7 +80,7 @@ fn main() {
                     Arc::clone(&current_job),
                     proxy.clone(),
                     &tray,
-                    selected_language,
+                    Arc::clone(&settings),
                 );
             }
             AppEvent::HotKey(event)
@@ -90,6 +98,26 @@ fn main() {
             }
             AppEvent::Menu(event) if tray.is_cancel_event(event.id()) => {
                 request_cancel(Arc::clone(&current_job), proxy.clone(), &tray);
+            }
+            AppEvent::Menu(event) if tray.is_voice_female_event(event.id()) => {
+                settings.lock().expect("settings poisoned").gender = language::Gender::Female;
+                tray.set_voice(language::Gender::Female);
+            }
+            AppEvent::Menu(event) if tray.is_voice_male_event(event.id()) => {
+                settings.lock().expect("settings poisoned").gender = language::Gender::Male;
+                tray.set_voice(language::Gender::Male);
+            }
+            AppEvent::Menu(event) if tray.is_lang_auto_event(event.id()) => {
+                settings.lock().expect("settings poisoned").language_mode = language::LanguageMode::Auto;
+                tray.set_language_mode(language::LanguageMode::Auto);
+            }
+            AppEvent::Menu(event) if tray.is_lang_english_event(event.id()) => {
+                settings.lock().expect("settings poisoned").language_mode = language::LanguageMode::English;
+                tray.set_language_mode(language::LanguageMode::English);
+            }
+            AppEvent::Menu(event) if tray.is_lang_vietnamese_event(event.id()) => {
+                settings.lock().expect("settings poisoned").language_mode = language::LanguageMode::Vietnamese;
+                tray.set_language_mode(language::LanguageMode::Vietnamese);
             }
             AppEvent::Menu(_) => {}
             AppEvent::ShowPopup(content) => {
@@ -111,8 +139,12 @@ fn handle_hotkey(
     current_job: Arc<Mutex<Option<Arc<AtomicBool>>>>,
     proxy: EventLoopProxy<AppEvent>,
     tray: &tray::AppTray,
-    language: language::Language,
+    settings: Arc<Mutex<AppSettings>>,
 ) {
+    let (language_mode, gender) = {
+        let s = settings.lock().expect("settings poisoned");
+        (s.language_mode, s.gender)
+    };
     let maybe_stop_signal = {
         let mut job = current_job.lock().expect("current_job poisoned");
         if let Some(stop_signal) = job.take() {
@@ -136,7 +168,7 @@ fn handle_hotkey(
     let _ = proxy.send_event(AppEvent::ClosePopup);
 
     thread::spawn(move || {
-        if let Err(error) = speak_selected_text(language, Arc::clone(&stop_signal)) {
+        if let Err(error) = speak_selected_text(language_mode, gender, Arc::clone(&stop_signal)) {
             eprintln!("speekr: {error}");
         }
 
@@ -176,12 +208,18 @@ fn request_cancel(
 }
 
 fn speak_selected_text(
-    language: language::Language,
+    language_mode: language::LanguageMode,
+    gender: language::Gender,
     stop_signal: Arc<AtomicBool>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let text = clipboard::read_selected_text()?;
     if !stop_signal.load(Ordering::SeqCst) {
-        tts::speak(&text, language, &stop_signal)?;
+        let language = match language_mode {
+            language::LanguageMode::Auto => language::Language::detect(&text),
+            language::LanguageMode::English => language::Language::English,
+            language::LanguageMode::Vietnamese => language::Language::Vietnamese,
+        };
+        tts::speak(&text, language, gender, &stop_signal)?;
     }
     Ok(())
 }

@@ -2,13 +2,14 @@ use std::sync::atomic::AtomicBool;
 
 use thiserror::Error;
 
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub trait TtsEngine {
     fn speak(
         &self,
         text: &str,
         language: Language,
+        gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError>;
 }
@@ -41,13 +42,13 @@ mod kitten;
 #[cfg(target_os = "windows")]
 mod windows;
 
-pub fn speak(text: &str, language: Language, stop_signal: &AtomicBool) -> Result<(), TtsError> {
+pub fn speak(text: &str, language: Language, gender: Gender, stop_signal: &AtomicBool) -> Result<(), TtsError> {
     let text = text.trim();
     if text.is_empty() {
         return Err(TtsError::EmptyText);
     }
 
-    if let Err(error) = kitten::KittenTts.speak(text, language, stop_signal) {
+    if let Err(error) = kitten::KittenTts.speak(text, language, gender, stop_signal) {
         eprintln!("speekr: KittenTTS failed, trying edge-tts: {error}");
     } else {
         return Ok(());
@@ -57,7 +58,7 @@ pub fn speak(text: &str, language: Language, stop_signal: &AtomicBool) -> Result
         return Ok(());
     }
 
-    if let Err(error) = edgetts::EdgeTts.speak(text, language, stop_signal) {
+    if let Err(error) = edgetts::EdgeTts.speak(text, language, gender, stop_signal) {
         eprintln!("speekr: edge-tts failed, falling back to OS TTS: {error}");
     } else {
         return Ok(());
@@ -67,37 +68,40 @@ pub fn speak(text: &str, language: Language, stop_signal: &AtomicBool) -> Result
         return Ok(());
     }
 
-    platform_speak(text, language, stop_signal)
+    platform_speak(text, language, gender, stop_signal)
 }
 
 #[cfg(target_os = "windows")]
 fn platform_speak(
     text: &str,
     language: Language,
+    gender: Gender,
     stop_signal: &AtomicBool,
 ) -> Result<(), TtsError> {
-    windows::WindowsTts.speak(text, language, stop_signal)
+    windows::WindowsTts.speak(text, language, gender, stop_signal)
 }
 
 #[cfg(target_os = "macos")]
 fn platform_speak(
     text: &str,
     language: Language,
+    gender: Gender,
     stop_signal: &AtomicBool,
 ) -> Result<(), TtsError> {
-    macos::MacOsTts.speak(text, language, stop_signal)
+    macos::MacOsTts.speak(text, language, gender, stop_signal)
 }
 
 #[cfg(target_os = "linux")]
 fn platform_speak(
     text: &str,
     language: Language,
+    gender: Gender,
     stop_signal: &AtomicBool,
 ) -> Result<(), TtsError> {
-    linux::LinuxTts.speak(text, language, stop_signal)
+    linux::LinuxTts.speak(text, language, gender, stop_signal)
 }
 
 #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
-fn platform_speak(_: &str, _: Language, _: &AtomicBool) -> Result<(), TtsError> {
+fn platform_speak(_: &str, _: Language, _: Gender, _: &AtomicBool) -> Result<(), TtsError> {
     Err(TtsError::UnsupportedOs)
 }

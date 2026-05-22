@@ -9,13 +9,14 @@ use std::{
 };
 
 use super::{TtsEngine, TtsError};
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub struct EdgeTts;
 
-/// Inline Python: reads text from stdin, synthesises with edge-tts, saves MP3 to argv[2].
+/// Inline Python: reads text from stdin (UTF-8), synthesises with edge-tts, saves MP3 to argv[2].
 const SYNTH_SCRIPT: &str =
-    "import sys,asyncio,edge_tts;\
+    "import sys,asyncio,edge_tts,io;\
+sys.stdin=io.TextIOWrapper(sys.stdin.buffer,encoding='utf-8');\
 asyncio.run(edge_tts.Communicate(sys.stdin.read().strip(),sys.argv[1]).save(sys.argv[2]))";
 
 impl TtsEngine for EdgeTts {
@@ -23,6 +24,7 @@ impl TtsEngine for EdgeTts {
         &self,
         text: &str,
         language: Language,
+        gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError> {
         if stop_signal.load(Ordering::SeqCst) {
@@ -30,7 +32,7 @@ impl TtsEngine for EdgeTts {
         }
 
         let mp3_path = std::env::temp_dir().join(format!("speekr-edge-{}.mp3", unique_id()));
-        let voice = language.edge_tts_voice();
+        let voice = language.edge_tts_voice(gender);
 
         let mut child = new_command("python")
             .args(["-c", SYNTH_SCRIPT, voice, &mp3_path.to_string_lossy()])

@@ -9,7 +9,7 @@ use std::{
 };
 
 use super::{TtsEngine, TtsError};
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub struct MacOsTts;
 
@@ -18,6 +18,7 @@ impl TtsEngine for MacOsTts {
         &self,
         text: &str,
         language: Language,
+        _gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError> {
         let path = std::env::temp_dir().join(format!("speekr-{}.txt", unique_id()));

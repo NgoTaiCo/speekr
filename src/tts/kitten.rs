@@ -7,7 +7,7 @@ use std::{
 };
 
 use super::{TtsEngine, TtsError};
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub struct KittenTts;
 
@@ -16,6 +16,7 @@ impl TtsEngine for KittenTts {
         &self,
         text: &str,
         _language: Language,
+        _gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError> {
         if stop_signal.load(std::sync::atomic::Ordering::SeqCst) {

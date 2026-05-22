@@ -8,7 +8,7 @@ use std::{
 };
 
 use super::{TtsEngine, TtsError};
-use crate::language::Language;
+use crate::language::{Gender, Language};
 
 pub struct WindowsTts;
 
@@ -17,6 +17,7 @@ impl TtsEngine for WindowsTts {
         &self,
         text: &str,
         language: Language,
+        gender: Gender,
         stop_signal: &AtomicBool,
     ) -> Result<(), TtsError> {
         let script = r#"
@@ -73,7 +74,7 @@ $speaker.Speak($text)
         let mut child = hidden_command("powershell")
             .args(["-NoProfile", "-STA", "-Command", script])
             .env("SPEEKR_CULTURE", language.windows_culture())
-            .env("SPEEKR_VOICE_HINT", language.windows_voice_hint())
+            .env("SPEEKR_VOICE_HINT", language.windows_voice_hint(gender))
             .stdin(Stdio::piped())
             .stdout(Stdio::null())
             .stderr(Stdio::piped())
