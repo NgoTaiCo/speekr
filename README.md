@@ -57,6 +57,8 @@ Grab **`speekr-setup-1.0.0.exe`** from [Releases](https://github.com/NgoTaiCo/sp
 
 The installer lets you optionally add a **Desktop shortcut** and **Run on startup** — both off by default, because we respect your desktop real estate.
 
+> **SmartScreen warning?** 😅 That's Windows being dramatic because the app isn't code-signed yet (certs cost money, this app is free). Click **"More info" → "Run anyway"** to proceed. The source code is fully open — feel free to audit it before running.
+
 ### macOS / Linux
 Grab the binary from [Releases](https://github.com/NgoTaiCo/speekr/releases):
 
