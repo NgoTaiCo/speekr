@@ -36,13 +36,19 @@ Highlight any text on your screen, hit a hotkey, and a neural voice reads it out
 
 ## Requirements 😬
 
-You need Python + one pip package. That's it. Seriously.
+Alright, let's be honest — there's a catch. Two, actually.
+
+**speekr** is a Rust app that wraps [edge-tts](https://github.com/rany2/edge-tts), a Python library that calls Microsoft Edge's neural TTS API. So:
+
+1. **You need Python 3** — speekr spawns a Python process to run `edge-tts` under the hood. No Python = no neural voice (it'll fall back to your OS's built-in robot voice, which, yeah).
+2. **You need internet** — `edge-tts` streams audio from Microsoft's servers in real time. Offline = silent. No exceptions.
 
 | Thing you need | Why |
 |----------------|-----|
-| **Python 3** | Runs the neural voice engine under the hood |
-| **edge-tts** | The actual magic. Falls back to your OS voice if it's missing (sounds worse, fair warning) |
-| **Windows 10/11** | WebView2 comes pre-installed — needed only for the translate popup |
+| **Python 3** | speekr wraps it to call edge-tts |
+| **edge-tts** (`pip install edge-tts`) | Makes the actual API call to Microsoft's neural TTS |
+| **Internet connection** | edge-tts calls Microsoft's servers — no connection, no voice |
+| **Windows 10/11** | WebView2 pre-installed — needed only for the translate popup |
 
 ```sh
 pip install edge-tts
